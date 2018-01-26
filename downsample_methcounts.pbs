@@ -1,0 +1,16 @@
+#PBS -S /bin/bash
+#PBS -l nodes=1:ppn=1
+#PBS -l mem=700MB
+#PBS -l vmem=700MB
+#PBS -l pmem=700MB
+#PBS -l walltime=300:00:00
+#PBS -q cmb
+#!/bin/bash
+cd "$PBS_O_WORKDIR"
+
+for i in $(cat downsample_list); do
+python /home/cmb-panasas2/decato/bin/downsample_methcounts.py -i ${IN} -o $(dirname ${IN})/$(basename ${IN} .meth)_downsampled_${i}.meth -d ${i}
+done
+
+
+

@@ -1,0 +1,26 @@
+#PBS -S /bin/bash
+#PBS -l nodes=1:ppn=1
+#PBS -l mem=10000MB
+#PBS -l vmem=10000MB
+#PBS -l pmem=10000MB
+#PBS -l walltime=100:00:00
+#PBS -q cmb
+#!/bin/bash
+cd "$PBS_O_WORKDIR"
+
+awk '{print $1 "\t" $2 "\t" $2+1 "\t" $1":"$2":"$2+1":"$3 "\t0\t" $3}' ${IN} > ${IN}.mm10_cpg.bed;
+
+liftOver ${IN}.mm10_cpg.bed /home/cmb-06/as/bdecato/chainfiles/mm10ToHg19.over.chain ${IN}.mm10-hg19.index ${IN}.mm10-hg19.unlifted
+
+fast-liftover -i ${IN}.mm10-hg19.index -f ${IN} -t ${IN}_hg19 -v
+
+export LC_ALL=C; sort -k 1,1 -k 2,2g -k 3,3 ${IN}_hg19 -o ${IN}_hg19.sorted
+
+lift-filter -o ${IN}_hg19 ${IN}_hg19.sorted -v
+
+/home/cmb-panasas2/decato/bin/methpipe/bin/pmd -v -p ${IN}_hg19.params -o ${IN}_hg19.pmd ${IN}_hg19
+
+#/home/cmb-panasas2/decato/bin/liftOver ${IN}_cpg.bed /home/cmb-panasas2/decato/chainfiles/hg19ToHg38.over.chain ${IN}-hg38.index ${IN}-hg38.unlifted
+#echo "done making index"
+#/home/cmb-panasas2/decato/bin/methpipe/src/utils/fast-liftover -i ${IN}-hg38.index -f ${IN} -t $(dirname ${IN})/$(basename ${IN} .meth)_hg38.meth -v
+

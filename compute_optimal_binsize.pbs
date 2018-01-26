@@ -1,0 +1,17 @@
+#PBS -S /bin/bash
+#PBS -l nodes=1:ppn=1
+#PBS -l mem=2000MB
+#PBS -l vmem=2000MB
+#PBS -l pmem=2000MB
+#PBS -l walltime=300:00:00
+#PBS -q cmb
+#!/bin/bash
+cd "$PBS_O_WORKDIR"
+
+
+binsize=$(Rscript /home/cmb-panasas2/decato/bin/compute_optimal_binsize.R ${IN};)
+
+/home/cmb-panasas2/decato/bin/methpipe-pmd-dev/bin/pmd_rep -b ${binsize} -d ${binsize} -v -o ${IN}_${binsize}_final.pmd ${IN};
+
+
+
