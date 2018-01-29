@@ -44,6 +44,9 @@ def main(argv):
       outputfile = arg
     elif opt in ("-d", "--dsample"):
       downsample_percent = float(arg)
+  if len(opts) != 3:
+    print('downsample_methcounts.py -i <inputfile> -o <outputfile> -d <downsamplepercent>')
+    sys.exit(2)
   ifile = open(inputfile,'r')
   ofile = open(outputfile, 'w')
   for l in ifile:
