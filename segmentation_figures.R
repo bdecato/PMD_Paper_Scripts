@@ -6,8 +6,8 @@
 #!/usr/bin/Rscript
 
 args = commandArgs(trailingOnly=TRUE)
-if (length(args)!=1) {
-    stop(paste("Must specify <inputfile>",
+if (length(args)!=3) {
+    stop(paste("Must specify <segmentation_table> <segmentation_size_dtn> <pmd_size_dtn>",
                             sep=""), call.=FALSE)
 }
 
