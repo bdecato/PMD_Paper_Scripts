@@ -1,3 +1,8 @@
+
+## Argument 1: the "segmentation_statistics" output file from segmentation_statistics.sh
+## Argument 2: the "segmentation_size_dtns" output file from segmentation_statistics.sh
+## Argument 3: the "pmd_size_dtns" output file from segmentation_statistics.sh
+
 #!/usr/bin/Rscript
 
 args = commandArgs(trailingOnly=TRUE)
@@ -23,4 +28,26 @@ barplot(data$V4,col=data$V2)
 abline(h=100000,lty=2,col="red")
 legend("topleft",legend=levels(factor(data$V2)),text.col=seq_along(levels(factor(data$V2))))
 dev.off()
+
+data<-read.table(args[2])
+ordered<-reorder(data$V1,data$V2,median)
+pdf("segmentation_size_dtns_with_outliers.pdf",useDingbats=FALSE)
+boxplot(data$V2~ordered,las=2,xlab="Sample",ylab="Segment size")
+dev.off()
+
+pdf("segmentation_size_dtns_no_outliers.pdf",useDingbats=FALSE)
+boxplot(data$V2~ordered,las=2,outline=FALSE,xlab="Sample",ylab="Segment size")
+dev.off()
+
+data<-read.table(args[3])
+ordered<-reorder(data$V1,data$V2,median)
+pdf("pmd_size_dtns_with_outliers.pdf",useDingbats=FALSE)
+boxplot(data$V2~ordered,las=2,xlab="Sample",ylab="PMD size")
+dev.off()
+
+pdf("pmd_size_dtns_no_outliers.pdf",useDingbats=FALSE)
+boxplot(data$V2~ordered,outline=FALSE,las=2,xlab="Sample",ylab="PMD size")
+dev.off()
+
+
 

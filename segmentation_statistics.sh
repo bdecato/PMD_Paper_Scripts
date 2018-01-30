@@ -36,4 +36,17 @@ for i in $(find . -name "*.pmd"); do
 
   # Grab the binsize
   grep "READING IN AT" $(dirname ${i})/$(basename ${i} .pmd).meth.error | awk '{split($6,a,"]"); print a[1]}';
-done
+done > segmentation_statistics
+
+for i in $(find . -name "*.pmd"); do
+  species=$(basename $(dirname ${i}));
+  sname=$(basename ${i} .pmd);
+  awk -v name=${sname} -v spec=${species} '{print name "\t" spec "\t" $3-$2}' ${i};
+done > segmentation_size_dtns
+
+for i in $(cat pmd_samplenames); do
+  species=$(basename $(dirname ${i}));
+  sname=$(basename ${i});
+  awk -v name=${sname} -v spec=${species} '{print name "\t" spec "\t" $3-$2}' ${i}.pmd;
+done > pmd_size_dtns
+
