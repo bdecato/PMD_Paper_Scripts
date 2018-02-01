@@ -35,10 +35,82 @@ awk '{split($4,a,","); print a[1]}' hg19_orthologs_collapsed > joined;
 
 ## for each of the 13675 orthologs present in all 7 species, make bed file for other species. 13506 existed in hg19.
 
-for i in $(cat joined); do
+ in $(cat joined); do
   for j in *_ensembl; do
     grep "$i" ${j} | awk '{if(NF==11){print $5 "\t" $6 "\t" $7 "\t" $1} if(NF==12){print $6 "\t" $7 "\t" $8 "\t" $1}}' | sort -k 1,1 -k 2,2g -k 3,3g > temp;
     bedtools merge -d 10000000 -i temp -c 4 -o collapse >> ${j}_orthologs_collapsed;
   done
 done
 
+## Sometimes bedtools merge with a 10Mb distance doesn't work because paralogs are on separate chromosomes.
+for i in *_collapsed; do 
+  awk '{split($4,a,","); print $1 "\t" $2 "\t" $3 "\t" a[1]}' ${i} > temp; 
+  sort -u -k4,4 temp > ${i}.uniqed; 
+done
+
+## Final cleanup to ensure every sample has exactly the same number of genes
+for i in *.uniqed; do
+  awk '{print $4}' ${i} | sort -k 1b,1 > ${i}.final; 
+done
+one=$(ls *.final| head -n 1);
+two=$(ls *.final| head -n 2 | tail -n 1);
+join ${one} ${two} > joined;
+rm ${one} ${two};
+for i in *.final; do
+  join ${i} joined > temp;
+  mv temp joined;
+done
+
+for i in *.uniqed; do
+  awk '{print $4 "\t" $0}' ${i} | sort -k 1b,1 > ${i}.tojoin;
+  join joined ${i}.tojoin | awk '{print $2 "\t" $3 "\t" $4 "\t" $5}' > ${i};
+done
+
+rm *.tojoin *.final joined;
+
+## Minor formatting
+export LC_ALL=C;
+for i in Human*.uniqed; do
+  awk '{print "chr" $0}' ${i} | sort -k 1,1 -k 2,2g -k 3,3g > $(dirname ${i})/$(basename ${i} .uniqed);
+done
+rm *.uniqed;
+
+sed 's/chr//g' Human_SquirrelMonkey_ensembl_orthologs_collapsed > temp; mv temp Human_SquirrelMonkey_ensembl_orthologs_collapsed # chromosome names were right to begin with
+sed 's/\.1//g' Human_SquirrelMonkey_ensembl_orthologs_collapsed > temp; mv temp Human_SquirrelMonkey_ensembl_orthologs_collapsed # chromosome names were right to begin with
+
+## Get consensus PMDs for placenta in each species
+
+bedtools intersect -f 0.999 -wa -a Human_Cow_ensembl_orthologs_collapsed -b Cow/Schroeder-2015-Cow_Placenta.pmd > Cow_genes_in_PMD
+bedtools intersect -f 0.999  -wa -a Human_Cow_ensembl_orthologs_collapsed -b Cow/Schroeder-2015-Cow_Placenta.anti-pmd > Cow_genes_out_PMD
+
+bedtools intersect -f 0.999  -wa -a Human_Mouse_ensembl_orthologs_collapsed -b Mouse/Schroeder-2015-Mouse_Placenta.pmd > Mouse_genes_in_PMD
+bedtools intersect -f 0.999  -wa -a Human_Mouse_ensembl_orthologs_collapsed -b Mouse/Schroeder-2015-Mouse_Placenta.anti-pmd > Mouse_genes_out_PMD
+
+bedtools intersect -f 0.999  -wa -a Human_Horse_ensembl_orthologs_collapsed -b Horse/Schroeder-2015-Horse_Placenta.pmd > Horse_genes_in_PMD
+bedtools intersect -f 0.999  -wa -a Human_Horse_ensembl_orthologs_collapsed -b Horse/Schroeder-2015-Horse_Placenta.anti-pmd > Horse_genes_out_PMD
+
+bedtools intersect -f 0.999  -wa -a Human_Dog_ensembl_orthologs_collapsed -b Dog/Schroeder-2015-Dog_Placenta.pmd > Dog_genes_in_PMD
+bedtools intersect -f 0.999  -wa -a Human_Dog_ensembl_orthologs_collapsed -b Dog/Schroeder-2015-Dog_Placenta.anti-pmd > Dog_genes_out_PMD
+
+bedtools intersect -f 0.999  -wa -a Human_SquirrelMonkey_ensembl_orthologs_collapsed -b SquirrelMonkey/Schroeder-2015-SquirrelMonkey_Placenta.pmd > SquirrelMonkey_genes_in_PMD
+bedtools intersect -f 0.999  -wa -a Human_SquirrelMonkey_ensembl_orthologs_collapsed -b SquirrelMonkey/Schroeder-2015-SquirrelMonkey_Placenta.anti-pmd > SquirrelMonkey_genes_out_PMD
+
+bedtools intersect -f 0.999  -wa -a Human_Rhesus_ensembl_orthologs_collapsed -b Rhesus/Schroeder-2015-Rhesus_Placenta.pmd > Rhesus_genes_in_PMD
+bedtools intersect -f 0.999  -a Human_Rhesus_ensembl_orthologs_collapsed -b Rhesus/Schroeder-2015-Rhesus_Placenta.anti-pmd > Rhesus_genes_out_PMD
+
+bedtools intersect -f 0.999  -wa -a hg19_orthologs_collapsed -b Human/Schroeder-2013_Human_Placenta.pmd > Human_genes_in_PMD
+bedtools intersect -f 0.999  -wa -a hg19_orthologs_collapsed -b Human/Schroeder-2013_Human_Placenta.anti-pmd > Human_genes_out_PMD
+
+for i in $(cat species_list); do
+  awk '{print $4 "\t1"}' ${i}_genes_in_PMD > ${i}_PMD_status;
+  awk '{print $4 "\t0"}' ${i}_genes_out_PMD >> ${i}_PMD_status;
+  sort -k 1b,1 ${i}_PMD_status > temp; mv temp ${i}_PMD_status;
+done
+
+join Human_PMD_status Rhesus_PMD_status > joined;
+join joined SquirrelMonkey_PMD_status > temp; mv temp joined;
+join joined Mouse_PMD_status > temp; mv temp joined;
+join joined Cow_PMD_status > temp; mv temp joined;
+join joined Horse_PMD_status > temp; mv temp joined;
+join joined Dog_PMD_status > temp; mv temp joined;
+mv joined UpSet-matrix
