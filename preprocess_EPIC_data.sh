@@ -27,7 +27,7 @@ done
 ## 
 
 for i in *.tojoin; do
-  join ${i} $2.joiner | awk '{split($3,a,":"); if(a[3]=="F"){print a[1] "\t" a[2]-1 "\t+\t" $1 "\t" $2}else{print a[1] "\t" a[2]-1 "\t+\t" $1 "\t" $2}}' | sort -k 1,1 -k 2,2g > $(basename ${i} .tojoin).meth;
+  join ${i} $2.joiner | awk '{split($3,a,":"); if(a[3]=="F"){print a[1] "\t" a[2]-1 "\t+\tCpG\t" $2}else{print a[1] "\t" a[2]-1 "\t+\tCpG\t" $2}}' | sort -k 1,1 -k 2,2g | grep -v "NA" > $(basename ${i} .tojoin).meth;
 done
 
 rm *.joiner *.tojoin;
