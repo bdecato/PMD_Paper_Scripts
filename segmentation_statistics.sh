@@ -44,6 +44,8 @@ for i in $(find . -name "*.pmd"); do
   awk -v name=${sname} -v spec=${species} '{print name "\t" spec "\t" $3-$2}' ${i};
 done > segmentation_size_dtns
 
+awk '{if($3>0.05 && $4>100000){print $2 "/" $1}}' segmentation_statistics > pmd_samplenames;
+
 for i in $(cat pmd_samplenames); do
   species=$(basename $(dirname ${i}));
   sname=$(basename ${i});
