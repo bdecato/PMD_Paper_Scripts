@@ -30,23 +30,23 @@ legend("topleft",legend=levels(factor(data$V2)),text.col=seq_along(levels(factor
 dev.off()
 
 data<-read.table(args[2])
-ordered<-reorder(data$V1,data$V2,median)
+ordered<-reorder(data$V1,data$V3,median)
 pdf("segmentation_size_dtns_with_outliers.pdf",useDingbats=FALSE)
-boxplot(data$V2~ordered,las=2,xlab="Sample",ylab="Segment size")
+boxplot(data$V3~ordered,las=2,xlab="Sample",ylab="Segment size")
 dev.off()
 
 pdf("segmentation_size_dtns_no_outliers.pdf",useDingbats=FALSE)
-boxplot(data$V2~ordered,las=2,outline=FALSE,xlab="Sample",ylab="Segment size")
+boxplot(data$V3~ordered,las=2,outline=FALSE,xlab="Sample",ylab="Segment size")
 dev.off()
 
 data<-read.table(args[3])
-ordered<-reorder(data$V1,data$V2,median)
+ordered<-reorder(data$V1,data$V3,median)
 pdf("pmd_size_dtns_with_outliers.pdf",useDingbats=FALSE)
-boxplot(data$V2~ordered,las=2,xlab="Sample",ylab="PMD size")
+boxplot(data$V3~ordered,las=2,xlab="Sample",ylab="PMD size")
 dev.off()
 
 pdf("pmd_size_dtns_no_outliers.pdf",useDingbats=FALSE)
-boxplot(data$V2~ordered,outline=FALSE,las=2,xlab="Sample",ylab="PMD size")
+boxplot(data$V3~ordered,outline=FALSE,las=2,xlab="Sample",ylab="PMD size")
 dev.off()
 
 
