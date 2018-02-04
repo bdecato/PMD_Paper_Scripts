@@ -10,8 +10,6 @@ for i in $(find . -name "*.meth.islands"); do
   rm ${i}.inpmds ${i}.outpmds;
 done
 
-find . -name "*.meth.islands" -exec rm {} \;
-
 sort -k 1b,1 island_summary > temp; mv temp island_summary;
 join manifest island_summary > temp; mv temp island_summary;
 
