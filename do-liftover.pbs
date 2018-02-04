@@ -15,7 +15,7 @@ awk '{print $1 "\t" $2 "\t" $2+1 "\t" $1":"$2":"$2+1":"$3 "\t0\t" $3}' ${IN} > $
 
 liftOver ${IN}.bed ${CHAINFILE} ${IN}.index ${IN}.unlifted
 
-fast-liftover -i ${IN}.index -f ${IN} -t ${IN}_newAssembly -v
+fast-liftover -i ${IN}.index -f ${IN} -t ${IN}_${NEWREF} -v
 
 export LC_ALL=C; sort -k 1,1 -k 2,2g -k 3,3 ${IN}_${NEWREF} -o ${IN}_${NEWREF}.sorted
 
