@@ -1,23 +1,30 @@
+# Needs updating, but I ran this on each subdirectory of a trackhub to get its trackDb.txt file. It assumes a pmd.bb file for each parent directory that can be empty.
 #!/bin/bash
-
+minimum_size=345;
 priority=0;
-minimumsize=345;
 for i in *.pmd.bb; do
-  actualsize=$(wc -c <"$i")
-  
-  if [[ $actualsize -ge $minimumsize ]]; then
-    printf "  track %s\n  visibility dense\n  priority %s\n  longLabel %s\n  shortLabel %s\n  type bigBed\n  color 0,0,0\n  bigDataUrl %s\n\n" $(basename ${i} .pmd.bb) ${priority}  $(basename ${i} .pmd.bb) $(basename ${i} .pmd.bb) ${i};
-    let priority="${priority}+1";
-  fi
+  echo ${i} | awk -F'[-_]' '{print $1 "-" $2}'
+done | sort | uniq > unique_parent_names;
 
-  if [ -f $(basename ${i} .pmd.bb).meth.bw ]; then
-    printf "  track %s\n  visibility full\n  priority %s\n  longLabel %s\n  shortLabel %s\n  type bigWig\n  color 197,172,24\n  autoScale off\n  viewLimits 0:1\n  yLineOnOff on\n  gridDefault on\n  windowingFunction mean\n  maxHeightPixels 24:24:24\n  bigDataUrl %s\n\n" $(basename ${i} .pmd.bb).meth.bw ${priority}  $(basename ${i} .pmd.bb).meth.bw $(basename ${i} .pmd.bb).meth.bw $(basename ${i} .pmd.bb).meth.bw;
-    let priority="${priority}+1";
-  fi
+for i in $(cat unique_parent_names); do
+  printf "track %s\nsuperTrack on\nshortLabel %s\nlongLabel %s\npriority %s\ngroup %s\nvisibility full\n\n" ${i} ${i} ${i} ${priority} ${i};
+  let priority="${priority}+1";
 
-  if [ -f $(basename ${i} .pmd.bb).read.bw ]; then
-    printf "  track %s\n  visibility full\n  priority %s\n  longLabel %s\n  shortLabel %s\n  type bigWig\n  color 0,0,0\n  autoScale off\n  viewLimits 0:1\n  yLineOnOff on\n  gridDefault on\n  windowingFunction mean\n  maxHeightPixels 24:24:24\n  bigDataUrl %s\n\n" $(basename ${i} .pmd.bb).read.bw ${priority}  $(basename ${i} .pmd.bb).read.bw $(basename ${i} .pmd.bb).read.bw $(basename ${i} .pmd.bb).meth.bw;
-    let priority="${priority}+1";
-  fi
+  for j in ${i}*pmd.bb; do
+    if [[ $actualsize -ge $minimumsize ]]; then
+      printf "  track %s\n  parent %s\n  visibility dense\n  priority %s\n  longLabel %s\n  shortLabel %s\n  type bigBed\n  color 0,0,0\n  bigDataUrl %s\n\n" $(basename ${j} .pmd.bb) ${i} ${priority} $(basename ${j} .pmd.bb) $(basename ${j} .pmd.bb) ${j};
+      let priority="${priority}+1";
+    fi
+
+    if [ -f $(basename ${j} .pmd.bb).meth.bw ]; then
+      printf "  track %s\n  parent %s\n  visibility full\n  priority %s\n  longLabel %s\n  shortLabel %s\n  type bigWig\n  color 197,172,24\n  autoScale off\n  viewLimits 0:1\n  yLineOnOff on\n  gridDefault on\n  windowingFunction mean\n  maxHeightPixels 24:24:24\n  bigDataUrl %s\n\n" $(basename ${j} .pmd.bb).meth.bw ${i} ${priority}  $(basename ${j} .pmd.bb).meth.bw $(basename ${j} .pmd.bb).meth.bw $(basename ${j} .pmd.bb).meth.bw;
+      let priority="${priority}+1";
+    fi
+
+    if [ -f $(basename ${j} .pmd.bb).read.bw ]; then
+      printf "  track %s\n  parent %s\n  visibility full\n  priority %s\n  longLabel %s\n  shortLabel %s\n  type bigWig\n  color 0,0,0\n  autoScale off\n  viewLimits 0:1\n  yLineOnOff on\n  gridDefault on\n  windowingFunction mean\n  maxHeightPixels 24:24:24\n  bigDataUrl %s\n\n" $(basename ${j} .pmd.bb).read.bw ${i} ${priority}  $(basename ${j} .pmd.bb).read.bw $(basename ${j} .pmd.bb).read.bw $(basename ${j} .pmd.bb).meth.bw;
+      let priority="${priority}+1";
+    fi
+  done
 done > trackDb.txt
 
