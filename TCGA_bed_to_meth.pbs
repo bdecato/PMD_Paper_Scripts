@@ -1,0 +1,18 @@
+#PBS -S /bin/bash
+#PBS -l nodes=1:ppn=1
+#PBS -l mem=10000MB
+#PBS -l vmem=10000MB
+#PBS -l pmem=10000MB
+#PBS -l walltime=24:00:00
+#PBS -q cmb
+#!/bin/bash
+cd "$PBS_O_WORKDIR"
+
+sed '1d' ${IN} > ${IN}.temp # get rid of the header
+
+grep -v -e "chrUn" -e "random" -e "hap" -e "chrX" -e "chrY" -e "chrM" ${IN}.temp > ${IN}.temp2; mv ${IN}.temp2 ${IN}.temp;
+
+export LC_ALL=C;
+awk '{print $1 "\t" $2 "\t+\tCpG\t" $7/100 "\t" $8}' ${IN}.temp | sort -k 1,1 -k 2,2g > ${IN}.meth;
+
+rm ${IN}.temp;
