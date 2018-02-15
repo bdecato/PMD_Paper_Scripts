@@ -7,11 +7,11 @@
 # parameters.
 # Afterward, make a jaccard index table with the analogous WGBS sample
 
-for i in $(cat desert_sizes); do
-  for j in $(cat bin_sizes); do
-    /home/cmb-panasas2/decato/bin/methpipe-pmd-dev/bin/pmd -v -p $(dirname $1)/$(basename $1 .meth)_${i}_${j}.params -f -i 1000 -d ${i} -b ${j} -o $(dirname $1)/$(basename $1 .meth)_${i}_${j}.pmd $1
-  done
-done
+#for i in $(cat desert_sizes); do
+#  for j in $(cat bin_sizes); do
+#    /home/cmb-panasas2/decato/bin/methpipe-pmd-dev/bin/pmd -v -p $(dirname $1)/$(basename $1 .meth)_${i}_${j}.params -f -i 1000 -d ${i} -b ${j} -o $(dirname $1)/$(basename $1 .meth)_${i}_${j}.pmd $1
+#  done
+#done
 
 for i in $(cat desert_sizes); do
   printf "%s\t" ${i};
