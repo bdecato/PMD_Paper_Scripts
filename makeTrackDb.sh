@@ -22,7 +22,7 @@ for i in $(cat unique_parent_names); do
     fi
 
     if [ -f $(basename ${j} .pmd.bb).read.bw ]; then
-      printf "  track %s\n  parent %s\n  visibility full\n  priority %s\n  longLabel %s\n  shortLabel %s\n  type bigWig\n  color 0,0,0\n  autoScale off\n  viewLimits 0:1\n  yLineOnOff on\n  gridDefault on\n  windowingFunction mean\n  maxHeightPixels 24:24:24\n  bigDataUrl %s\n\n" $(basename ${j} .pmd.bb).read.bw ${i} ${priority}  $(basename ${j} .pmd.bb).read.bw $(basename ${j} .pmd.bb).read.bw $(basename ${j} .pmd.bb).meth.bw;
+      printf "  track %s\n  parent %s\n  visibility full\n  priority %s\n  longLabel %s\n  shortLabel %s\n  type bigWig\n  color 0,0,0\n  autoScale off\n  viewLimits 0:1\n  yLineOnOff on\n  gridDefault on\n  windowingFunction mean\n  maxHeightPixels 24:24:24\n  bigDataUrl %s\n\n" $(basename ${j} .pmd.bb).read.bw ${i} ${priority}  $(basename ${j} .pmd.bb).read.bw $(basename ${j} .pmd.bb).read.bw $(basename ${j} .pmd.bb).read.bw;
       let priority="${priority}+1";
     fi
   done
