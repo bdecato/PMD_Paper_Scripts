@@ -33,5 +33,5 @@ rm temp ${1}_allsamples;
 
 # get average methylation level inside and outside of union PMDs for non-PMD samples
 for i in $(cat ${1}_nonpmdsamples); do
-  qsub -v IN=${i}.meth,UNION="Intersection_${1}_PMDs.bed",DIFFERENCE="Difference_${1}_PMDs.bed" /home/cmb-panasas2/decato/bin/PMD_Paper_Scripts/do-roimethstat-inoutunion.pbs; sleep 0.1;
+  sbatch --job-name=${i}-roimethstat-inoutunion --output ${i}.out --error ${i}.error --export=IN="${i}.meth",UNION="Intersection_${1}_PMDs.bed",DIFFERENCE="Difference_${1}_PMDs.bed" /home/cmb-panasas2/decato/bin/PMD_Paper_Scripts/do-roimethstat-inoutunion.slurm; sleep 0.1;
 done
