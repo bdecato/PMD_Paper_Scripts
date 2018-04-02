@@ -11,6 +11,11 @@ bedtools merge -i to_merge > Union_${1}_PMDs.bed;
 bedtools subtract -a /home/cmb-panasas2/decato/regions_of_interest/${2}_chroms.bed -b Union_${1}_PMDs.bed > Difference_${1}_PMDs.bed;
 rm to_merge;
 
+# Exclude regulatory regions from difference
+bedtools subtract -a Difference_${1}_PMDs.bed -b /home/cmb-panasas2/decato/regions_of_interest/${2}/${2}_promoters.bed > temp;
+mv temp Difference_${1}_PMDs.bed;
+bedtools subtract -a Difference_${1}_PMDs.bed -b /home/cmb-panasas2/decato/regions_of_interest/${2}/${2}_cpgislands.bed > temp;
+
 # Get the intersection of PMDs for human
 first=$(head -n 1 ${1}_pmdsamples);
 second=$(head -n 2 ${1}_pmdsamples | tail -n 1);
