@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# For each PMD with size greater than 200kb, break it up into 5kb blocks that stretch 100k left and right of each boundary, and
+# name them with binIDs o20 o19 .. o1 i1 i2 .. i20. Get roimethstat across all such bed files and cat them together. boxplot by name
+
 export LC_ALL=C;
 for i in $(cat pmd_samplenames); do
   awk -v sname=${i} -v numbins=100 '{
