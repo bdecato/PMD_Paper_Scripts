@@ -27,7 +27,7 @@ grep -v "Gene" joined > temp; mv temp joined # Get rid of the header
 ## There are 13674 orthologs present in all 7 species, but only 13495 of them are in the hg19_ensembl annotation.
 ## We print them if they exist as below and then update the "joined" file to reflect the reduced set of genes.
 for i in $(cat joined); do 
-  grep "$i" ~/Downloads/hg19_ensembl | awk '{print $3 "\t" $5 "\t" $6 "\t" $13}' | sort -k 1,1 -k 2,2g -k 3,3g > temp;
+  grep "$i" hg19.ensembl | awk '{print $3 "\t" $5 "\t" $6 "\t" $13}' | sort -k 1,1 -k 2,2g -k 3,3g > temp;
   bedtools merge -d 10000000 -i temp -c 4 -o collapse >> hg19_orthologs_collapsed;
 done
 
@@ -35,7 +35,7 @@ awk '{split($4,a,","); print a[1]}' hg19_orthologs_collapsed > joined;
 
 ## for each of the 13675 orthologs present in all 7 species, make bed file for other species. 13506 existed in hg19.
 
- in $(cat joined); do
+for i in $(cat joined); do
   for j in *_ensembl; do
     grep "$i" ${j} | awk '{if(NF==11){print $5 "\t" $6 "\t" $7 "\t" $1} if(NF==12){print $6 "\t" $7 "\t" $8 "\t" $1}}' | sort -k 1,1 -k 2,2g -k 3,3g > temp;
     bedtools merge -d 10000000 -i temp -c 4 -o collapse >> ${j}_orthologs_collapsed;

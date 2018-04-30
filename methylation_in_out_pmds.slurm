@@ -1,13 +1,13 @@
-# Script for getting average methylation inside and outside of PMDs, as well as CpGs inside and outside of PMDs
-#PBS -S /bin/bash
-#PBS -l nodes=1:ppn=1
-#PBS -l mem=10000MB
-#PBS -l vmem=10000MB
-#PBS -l pmem=10000MB
-#PBS -l walltime=300:00:00
-#PBS -q cmb
 #!/bin/bash
-cd "$PBS_O_WORKDIR"
+#SBATCH -J do-methylation_in_out_pmds.slurm
+#SBATCH --partition cmb
+#SBATCH --ntasks=1
+#SBATCH --mem-per-cpu=5GB 
+#SBATCH --time=100:00:00
+
+# Script for getting average methylation inside and outside of PMDs, as well as CpGs inside and outside of PMDs
+
+cd ${SLURM_SUBMIT_DIR}
 
 species=$(basename $(dirname ${IN}));
 if [ $species == 'Human' ]
@@ -42,6 +42,7 @@ roimethstat -v -L -o ${IN}.anti-pmd.roimethstat ${IN}.anti-pmd ${IN}.meth;
 export LC_ALL=C;
 awk '{print $1 "\t" $2 "\t" $2+1 "\t" $4 ":" $6 "\t" $5 "\t" $3}' ${IN}.meth | sort -k 1,1 -k 2,2g -k 3,3g -k 6,6 > ${IN}.bed;
 
-mapsifter -t ${IN}.pmd ${IN}.bed > ${IN}.meth.inpmd;
-mapsifter -e -t ${IN}.pmd ${IN}.bed > ${IN}.meth.outpmd;
+bedtools intersect -wa -a ${IN}.bed -b ${IN}.pmd > ${IN}.meth.inpmd;
+bedtools intersect -v -wa -a ${IN}.bed -b ${IN}.pmd > ${IN}.meth.outpmd; 
+
 rm ${IN}.bed;
