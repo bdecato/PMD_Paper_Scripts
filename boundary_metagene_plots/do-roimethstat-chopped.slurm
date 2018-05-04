@@ -7,5 +7,5 @@
 
 cd ${SLURM_SUBMIT_DIR}
 
-/home/cmb-panasas2/decato/bin/methpipe/bin/roimethstat -L -o ${IN}.roimethstat ${REF} ${IN}
+/home/cmb-panasas2/decato/bin/methpipe/bin/roimethstat -L -o ${IN}.binnedroi ${REF} ${IN}
 

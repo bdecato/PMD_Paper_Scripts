@@ -23,3 +23,4 @@ awk '{ switch(substr($3,1,2)) {
            break
        }
 }' PMD_absolute_metagene > PMD_absolute_metagene.forR;
+grep "lacenta" PMD_absolute_metagene.forR > PMD_absolute_metagene_placenta.forR
