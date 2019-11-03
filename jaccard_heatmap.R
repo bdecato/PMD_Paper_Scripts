@@ -8,6 +8,7 @@ if (length(args)!=1) {
                             sep=""), call.=FALSE)
 }
 
+
 data<-read.table(args[1],header=TRUE)
 
 diag(data)<-NA;

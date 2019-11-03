@@ -17,11 +17,11 @@ for i in $(cat desert_sizes); do
   printf "%s\t" ${i};
 done > $1_jaccard_heatmap;
 printf "\n" >> $1_jaccard_heatmap;
-for i in $(cat bin_sizes); do
+for i in $(cat bin_sizes_2); do
   printf "%s\t" ${i};
   for j in $(cat desert_sizes); do
-    if [ -f $(basename $1 .meth)_${j}_${i}.pmd ]; then
-      x=$(/home/cmb-panasas2/decato/bin/bedtools2/bin/bedtools jaccard -a $(dirname $1)/$(basename $1 .meth)_${j}_${i}.pmd -b $2 | tail -1 | awk '{print $3}');
+    if [ -f Pidsley_${i}_${j}.pmd ]; then
+      x=$(/home/cmb-panasas2/decato/bin/bedtools2/bin/bedtools jaccard -a Pidsley_${i}_${j}.pmd -b $2 | tail -1 | awk '{print $3}');
       printf "%s\t" ${x};
     else
       printf "0\t";

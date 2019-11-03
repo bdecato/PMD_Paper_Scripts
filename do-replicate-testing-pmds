@@ -1,0 +1,31 @@
+#PBS -S /bin/sh
+#PBS -e ${IN}.error
+#PBS -o ${IN}.out
+#PBS -l mem=5000MB
+#PBS -l vmem=5000MB
+#PBS -l pmem=5000MB
+#PBS -l nodes=1:ppn=1
+#PBS -l walltime=96:00:00
+#PBS -q cmb
+#!/bin/bash
+cd "$PBS_O_WORKDIR"
+
+#export LC_ALL=C;
+#sort -k 1,1 -k 2,2g -k 3,3g -k 6,6 -o ${IN}.sorted ${IN};
+
+merge-methcounts -v -o Lymphoblastoid.meth Banovich-2014_Human_GM18505.meth Banovich-2014_Human_GM18507.meth Banovich-2014_Human_GM18508.meth Banovich-2014_Human_GM18516.meth Banovich-2014_Human_GM18522.meth Banovich-2014_Human_GM19141.meth Banovich-2014_Human_GM19193.meth Banovich-2014_Human_GM19204.meth Banovich-2014_Human_GM19238.meth Banovich-2014_Human_GM19239.meth Schlesinger-2013_Human_GM12878.meth
+
+/home/cmb-panasas2/decato/bin/methpipe-pmd-dev/bin/pmd -v -p merged_reps.params -f -b 1000 -i 1000 -o merged_reps.pmd Lymphoblastoid.meth
+
+/home/cmb-panasas2/decato/bin/methpipe-pmd-dev/bin/pmd -v -p separate_reps_mergedbin.params -f -b 1000 -i 1000 -o separate_reps_mergedbin.pmd Banovich-2014_Human_GM18505.meth Banovich-2014_Human_GM18507.meth Banovich-2014_Human_GM18508.meth Banovich-2014_Human_GM18516.meth Banovich-2014_Human_GM18522.meth Banovich-2014_Human_GM19141.meth Banovich-2014_Human_GM19193.meth Banovich-2014_Human_GM19204.meth Banovich-2014_Human_GM19238.meth Banovich-2014_Human_GM19239.meth Schlesinger-2013_Human_GM12878.meth
+
+/home/cmb-panasas2/decato/bin/methpipe-pmd-dev/bin/pmd -v -p separate_reps_maxbin.params -f -b 9500 -i 1000 -o separate_reps_maxbin.pmd Banovich-2014_Human_GM18505.meth Banovich-2014_Human_GM18507.meth Banovich-2014_Human_GM18508.meth Banovich-2014_Human_GM18516.meth Banovich-2014_Human_GM18522.meth Banovich-2014_Human_GM19141.meth Banovich-2014_Human_GM19193.meth Banovich-2014_Human_GM19204.meth Banovich-2014_Human_GM19238.meth Banovich-2014_Human_GM19239.meth Schlesinger-2013_Human_GM12878.meth
+
+/home/cmb-panasas2/decato/bin/methpipe-pmd-dev/bin/pmd -v -p separate_reps_minbin.params -f -b 1500 -i 1000 -o separate_reps_minbin.pmd Banovich-2014_Human_GM18505.meth Banovich-2014_Human_GM18507.meth Banovich-2014_Human_GM18508.meth Banovich-2014_Human_GM18516.meth Banovich-2014_Human_GM18522.meth Banovich-2014_Human_GM19141.meth Banovich-2014_Human_GM19193.meth Banovich-2014_Human_GM19204.meth Banovich-2014_Human_GM19238.meth Banovich-2014_Human_GM19239.meth Schlesinger-2013_Human_GM12878.meth
+
+for i in *.pmd; do awk '{print $1 "\t" $3 "\t" $3+1 "\t" $4 "\t" $5 "\t" $6}' ${i} > ${i}.rightboundaries; done
+
+for i in *.pmd; do awk '{print $1 "\t" $2 "\t" $2+1 "\t" $4 "\t" $5 "\t" $6}' ${i} > ${i}.leftboundaries; done
+
+for i in *.leftboundaries; do /home/cmb-panasas2/decato/bin/adssrc/tsscpgplot -o ${i}.meta -s 50000 -b 1000 -v ${i} Lymphoblastoid.meth ; echo ${i}; done
+for i in *.rightboundaries; do /home/cmb-panasas2/decato/bin/adssrc/tsscpgplot -o ${i}.meta -s 50000 -b 1000 -v ${i} Lymphoblastoid.meth ; echo ${i}; done

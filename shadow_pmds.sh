@@ -16,7 +16,15 @@ bedtools subtract -a Difference_${1}_PMDs.bed -b /home/cmb-panasas2/decato/regio
 mv temp Difference_${1}_PMDs.bed;
 bedtools subtract -a Difference_${1}_PMDs.bed -b /home/cmb-panasas2/decato/regions_of_interest/${2}/${2}_cpgislands.bed > temp;
 
-# Get the intersection of PMDs for human
+# Exclude expanded gene bodies and +/-100kb from those gene bodies from difference, added after
+mv temp Difference_${1}_PMDs.bed;
+bedtools subtract -a Difference_${1}_PMDs.bed -b /home/cmb-panasas2/decato/hg19_gencode/hg19_gencode_combined.bed > temp;
+#mv temp Difference_${1}_PMDs.bed;
+#bedtools subtract -a Difference_${1}_PMDs.bed -b /home/cmb-panasas2/decato/regions_of_interest/${2}/${2}_genes_flanking_50kb.bed > temp;
+mv temp Difference_${1}_PMDs.bed;
+
+
+# Get the intersection of PMDs
 first=$(head -n 1 ${1}_pmdsamples);
 second=$(head -n 2 ${1}_pmdsamples | tail -n 1);
 bedtools intersect -a ${first}.pmd -b ${second}.pmd > intersection;
