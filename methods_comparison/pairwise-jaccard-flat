@@ -1,0 +1,11 @@
+#!/bin/bash
+for i in *.jaccard
+	do
+    for j in *.jaccard
+		do
+	    printf "%s\t" "$(basename $i .jaccard)"
+      printf "%s\t" "$(basename $j .jaccard)"
+			x=$(/home/cmb-panasas2/decato/bin/bedtools2/bin/bedtools jaccard -a ${i} -b ${j} | tail -1 | awk '{print $3}')
+			printf "%s\n" "$x"
+	done
+done
