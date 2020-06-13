@@ -1,6 +1,6 @@
 # PMD Paper Scripts
 
-This repository contains a mix of shell, Python, and R scripts, some designed to be run with the slurm high-performance computing environment scheduler. These scripts were important for figure generation for Decato et al. 2018, "Identification and Analysis of Partially Methylated Domains" (DOIXXX). For now (AKA until I have a figure layout), these are stored in a flat format. Most Rscripts take flat files from their paired shell script as input.
+This repository contains a mix of shell, Python, and R scripts, some designed to be run with the slurm high-performance computing environment scheduler. These scripts were important for figure generation. For now, these are stored in a flat format. Most Rscripts take flat files from their paired shell script as input.
 
 All analysis performed assumes a directory structure like the following:
 
