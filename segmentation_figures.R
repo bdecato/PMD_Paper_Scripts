@@ -23,6 +23,7 @@ barplot(data$V3,col=data$V2)
 abline(h=0.05,lty=2,col="red")
 legend("topleft",legend=levels(factor(data$V2)),text.col=seq_along(levels(factor(data$V2))))
 dev.off()
+
 pdf("sorted_mean.pdf",useDingbats=FALSE)
 barplot(data$V4,col=data$V2)
 abline(h=100000,lty=2,col="red")
@@ -48,6 +49,4 @@ dev.off()
 pdf("pmd_size_dtns_no_outliers.pdf",useDingbats=FALSE)
 boxplot(data$V3~ordered,outline=FALSE,las=2,xlab="Sample",ylab="PMD size")
 dev.off()
-
-
 

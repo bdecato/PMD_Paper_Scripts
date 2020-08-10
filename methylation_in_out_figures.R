@@ -1,20 +1,36 @@
-## Argument 1: the "Out_In_PMD_Statistics.joined" output file from methylation_in_out.sh
-
 #!/usr/bin/Rscript
 library(ggplot2)
-args = commandArgs(trailingOnly=TRUE)
-if (length(args)!=1) {
-    stop(paste("Must specify <out-in-pmd-statistics>",
-                            sep=""), call.=FALSE)
-}
+library(tidyverse)
 
-data<-read.table(args[1])
+## Argument 1: the "Out_In_PMD_Statistics" output file from methylation_in_out.sh
+data <- read.table("~/Desktop/Decato-PMD-revision-analysis/Out_In_PMD_Statistics", header=TRUE)
+data$CellType <- as.character(data$CellType)
 
-pdf("meth_in_out_vioplots_allsamples.pdf")
-ggplot(data=data,aes(x=V8,y=V12,group=V8,fill=V11/V12))+facet_wrap(~V1)+geom_violin(draw_quantiles=c(0.25,0.5,0.75))+xlab("Sample")+ylab("%mCpG")+theme(text = element_text(size=5), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour="black"),strip.background=element_rect(fill="white"))
-dev.off()
+cultured_primary_cancers <- data %>% filter(PMDs == "yes" & InOutPMD == "pmd" & HealthyCancer == "Cancer")
 
-pdf("pmd_depth_by_culturing_and_health.pdf")
-ggplot(data=data,aes(x=V8,y=V12,group=V8))+facet_grid(V3~V4)+geom_violin(draw_quantiles=c(0.25,0.5,0.75))+ylab("%mCpG")+theme(text = element_text(size=10), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour="black"),strip.background=element_rect(fill="white"))
-dev.off()
+# HCT116 mislabeled as bladder, it's colorectal cancer
+cultured_primary_cancers <- cultured_primary_cancers %>%
+  mutate(CellType = ifelse(Sample=="Blattler-2014_Human_HCT116","Colon",CellType))
+
+# Figure 3E.
+ggplot(cultured_primary_cancers, aes(x=CellType,y=MethylationLevel,fill=PrimaryCultured)) +
+  geom_boxplot() +
+  theme_bw() +
+  theme(legend.position = "right", text = element_text(size=14), axis.text = element_text(size = 10),
+        axis.text.x = element_text(angle = 45, hjust = 1), strip.background = element_blank(),
+        strip.placement = "outside")
+
+# For tissues with cultured and primary data, Wilcox test on methylation levels.
+cultured_primary_cancers %>%
+  filter(CellType == "Brain" | CellType == "Breast" | CellType == "Colon" | CellType == "Lung") %>%
+  group_by(CellType) %>%
+  do(w = wilcox.test(MethylationLevel~PrimaryCultured, alternative = "less", data=., paired=FALSE)) %>%
+  summarise(CellType, Wilcox = w$p.value)
+
+# CellType    Wilcox
+# 1 Brain    1.28e-222
+# 2 Breast   0.       
+# 3 Colon    6.15e- 23
+# 4 Lung     0.     
+
 
