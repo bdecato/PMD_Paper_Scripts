@@ -1,34 +1,47 @@
+#!/usr/bin/Rscript
+library(tidyverse)
 
 ## Argument 1: the "segmentation_statistics" output file from segmentation_statistics.sh
 ## Argument 2: the "segmentation_size_dtns" output file from segmentation_statistics.sh
 ## Argument 3: the "pmd_size_dtns" output file from segmentation_statistics.sh
 
-#!/usr/bin/Rscript
+data <- read.table("~/Desktop/Decato-PMD-revision-analysis/segmentation_statistics", header=TRUE)
 
-args = commandArgs(trailingOnly=TRUE)
-if (length(args)!=3) {
-    stop(paste("Must specify <segmentation_table> <segmentation_size_dtn> <pmd_size_dtn>",
-                            sep=""), call.=FALSE)
-}
+#ggplot(data,aes(x=Binsize,fill=Species)) +
+#  geom_histogram(alpha=1) +
+#  theme_bw() + 
+#  theme(legend.position = "right", text = element_text(size=14), axis.text = element_text(size = 10),
+#        axis.text.x = element_text(angle = 45, hjust = 1), strip.background = element_blank(),
+#        strip.placement = "outside")
 
-data<-read.table(args[1])
+# Figure 2A
+# Over half (154/267, 57%) of the samples available from TCGA and MethBase were segmented using a bin size
+# greater than the previous standard 1kb, allowing a standardized look at PMD summary statistics
+# across a significantly greater number of methylomes than previously possible.
+ggplot(data, aes(x=Depth, y=Binsize, color = Species)) + 
+  geom_point() + 
+  xlab("Mean CpG Sequencing Depth") +
+  ylab("Selected bin size (bp)") +
+  theme_bw() + 
+  theme(legend.position = "bottom", text = element_text(size=10), axis.text = element_text(size = 8),
+        axis.text.x = element_text(angle = 45, hjust = 1), strip.background = element_blank(),
+        strip.placement = "outside")
 
-pdf("binsize_by_coverage.pdf")
-plot(data$V8~data$V7,col=data$V2,xlab="Mean CpG coverage depth",ylab="Bin size")
-legend("topright",legend=levels(factor(data$V2)),text.col=seq_along(levels(factor(data$V2))))
-dev.off()
+test <- data %>% gather("Stats", "Value", FractionSegmented:MeanSize)
+frac <- data %>% select(Sample, FractionSegmented)
+test <- test %>%
+  left_join(frac)
+options(scipen=10000)
 
-pdf("sorted_frac.pdf",useDingbats=FALSE)
-barplot(data$V3,col=data$V2)
-abline(h=0.05,lty=2,col="red")
-legend("topleft",legend=levels(factor(data$V2)),text.col=seq_along(levels(factor(data$V2))))
-dev.off()
-
-pdf("sorted_mean.pdf",useDingbats=FALSE)
-barplot(data$V4,col=data$V2)
-abline(h=100000,lty=2,col="red")
-legend("topleft",legend=levels(factor(data$V2)),text.col=seq_along(levels(factor(data$V2))))
-dev.off()
+# Figure 2B
+ggplot(test, aes(x = reorder(Sample, FractionSegmented), y = Value, fill = Species)) + 
+  geom_bar(stat="identity") + 
+  coord_flip() + 
+  facet_wrap(~Stats,ncol=2,scales="free") + 
+  theme_bw() + 
+  theme(legend.position = "bottom", text = element_text(size=10), axis.text = element_blank(),
+        axis.text.x = element_text(angle = 45, hjust = 1), strip.background = element_blank(),
+        strip.placement = "outside")
 
 data<-read.table(args[2])
 ordered<-reorder(data$V1,data$V3,median)

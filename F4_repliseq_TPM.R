@@ -49,14 +49,48 @@ summary(lm(hepg2$Repliseq_Signal~hepg2$MethylationPercent))
 ######
 data$Region <- factor(data$Region, levels=c("inPMD","escapeePMD","outPMD"))
 
-ggplot(data, aes(x=Sample, y=Repliseq_Signal,fill=Region)) +
-  geom_violin() +
+ggplot(data, aes(x=Sample, y=Repliseq_Signal, fill=Region)) +
+  geom_violin(draw_quantiles = c(0.5)) +
   theme_bw() +
   theme(legend.position = "right", text = element_text(size=14), axis.text = element_text(size = 10),
         axis.text.x = element_text(angle = 45, hjust = 1), strip.background = element_blank(),
         strip.placement = "outside")
 
+imr90_escapee_inside <- data %>%
+  filter(Sample == "Lister-ESC-2009_Human_IMR90") %>%
+  filter(Region == "inPMD" | Region == "escapeePMD")
+wilcox.test(imr90_escapee_inside$Repliseq_Signal~imr90_escapee_inside$Region)
+# p < 2.2e-16
+
+imr90_escapee_outside <- data %>%
+filter(Sample == "Lister-ESC-2009_Human_IMR90") %>%
+  filter(Region == "outPMD" | Region == "escapeePMD")
+wilcox.test(imr90_escapee_outside$Repliseq_Signal~imr90_escapee_outside$Region)
+wilcox.test(imr90_escapee_outside$Repliseq_Signal~imr90_escapee_outside$Region)
+# p < 2.2e-16
+
+mcf7_escapee_inside <- data %>%
+  filter(Sample == "Menafra-2014_Human_MCF7") %>%
+  filter(Region == "inPMD" | Region == "escapeePMD")
+wilcox.test(mcf7_escapee_inside$Repliseq_Signal~mcf7_escapee_inside$Region)
+# p < 2.2e-16
+
+mcf7_escapee_outside <- data %>%
+  filter(Sample == "Menafra-2014_Human_MCF7") %>%
+  filter(Region == "outPMD" | Region == "escapeePMD")
+wilcox.test(mcf7_escapee_outside$Repliseq_Signal~mcf7_escapee_outside$Region)
+wilcox.test(mcf7_escapee_outside$Repliseq_Signal~mcf7_escapee_outside$Region)
+# p < 2.2e-16
+
+gm12878_escapee_inside <- data %>%
+gm12878_escapee_outside <- data %>%
+
+hepg2_escapee_inside <- data %>%
+hepg2_escapee_outside <- data %>%
+
+###################################################################################
 #### TPM figures
+###################################################################################
 tpm <- read.table("~/Desktop/Decato-PMD-revision-analysis/TPM_info", header=TRUE)
 tpm$Region <- factor(tpm$Region, levels=c("inPMDs","escapees","outPMDs"))
 
