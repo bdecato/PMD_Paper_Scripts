@@ -1,6 +1,6 @@
 # Data availability
 
-Raw bisulfite and RNA-sequencing data for novel methylomes and transcriptomes used in this study can be accessed via the Gene Expression Omnibus (GEO) under accession number GSE152819. Additionally, we provide here a compressed dataset containing the chromosomal locations of called PMDs in all tissues (all_PMDs).
+Raw bisulfite and RNA-sequencing data for novel methylomes and transcriptomes used in this study can be accessed via the Gene Expression Omnibus (GEO) under accession number GSE152819. Additionally, we provide here a compressed dataset containing the chromosomal locations of called PMDs in all tissues (`AllPMDs.tar.gz2`).
 
 # PMD Paper Scripts
 
@@ -46,3 +46,6 @@ http://smithlab.usc.edu/lab/public/decato/Decato-nonPMDs/hub.txt
 
 http://smithlab.usc.edu/lab/public/decato/Decato-Lifted-PMDs/hub.txt
 
+After loading the trackhubs, you can load the session below to quickly and easily browse the methylation levels and PMD calls (centered around an escapee gene, MAD2L1, mitotic spindle assembly checkpoint protein, MAD2A):
+
+http://genome.ucsc.edu/s/bdecato/Decato%2DHuman%2DPMDs%2D2020
