@@ -8,6 +8,8 @@ props <- read.table("~/Desktop/Decato-PMD-revision-analysis/joined_block_prop_pm
 human <- read.table("~/Desktop/Decato-PMD-revision-analysis/hg19_blocks.bed", header=TRUE)
 mouse <- read.table("~/Desktop/Decato-PMD-revision-analysis/mm10_blocks.bed",header=TRUE)
 
+summary(lm(props$FracCoveredHuman~props$FracCoveredMouse))
+
 ggplot(props,aes(x=FracCoveredHuman,y=FracCoveredMouse,color=log(BlockSizeHuman))) + 
   geom_point() +
   geom_smooth(method="lm") + 

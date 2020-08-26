@@ -1,5 +1,5 @@
 #!/usr/bin/Rscript
-library(ggplot2)
+library(tidyverse)
 library(hexbin)
 
 data <- read.table("~/Desktop/Decato-PMD-revision-analysis/repliseq_summary",header=TRUE)
@@ -82,11 +82,11 @@ wilcox.test(mcf7_escapee_outside$Repliseq_Signal~mcf7_escapee_outside$Region)
 wilcox.test(mcf7_escapee_outside$Repliseq_Signal~mcf7_escapee_outside$Region)
 # p < 2.2e-16
 
-gm12878_escapee_inside <- data %>%
-gm12878_escapee_outside <- data %>%
+#gm12878_escapee_inside <- data %>%
+#gm12878_escapee_outside <- data %>%
 
-hepg2_escapee_inside <- data %>%
-hepg2_escapee_outside <- data %>%
+#hepg2_escapee_inside <- data %>%
+#hepg2_escapee_outside <- data %>%
 
 ###################################################################################
 #### TPM figures
