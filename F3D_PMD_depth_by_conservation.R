@@ -23,6 +23,9 @@ data <- data %>%
 
 table(data$sig)
 
+write.table(data, file = "~/Desktop/Decato-PMD-revision-analysis/Gene_OE.tsv", quote = FALSE,
+            append = FALSE, sep = "\t", row.names = FALSE)
+
 ###########################################
 # Retrotransposon family-level depletion
 ###########################################
@@ -105,8 +108,6 @@ table(tss$sig)
 write.table(tss, file = "~/Desktop/Decato-PMD-revision-analysis/tss_OE_table.tsv", quote = FALSE,
             append = FALSE, sep = "\t", row.names = FALSE)
 
-
-
 #### TES
 tes <- read.table("~/Desktop/Decato-PMD-revision-analysis/OE_statistics/human_TES_boundary_OE", header = TRUE)
 summary(tes$OE) # There is a median OE ratio of 1.65 across all PMD containing samples.
@@ -117,6 +118,19 @@ tes <- tes %>%
   mutate(adjP = p.adjust(BinomTestP)) %>% mutate(sig = ifelse(adjP < 0.05,"Yes","No")) %>%
   mutate(Region = "TES")
 table(tes$sig)
+
+write.table(tes, file = "~/Desktop/Decato-PMD-revision-analysis/tes_OE_table.tsv", quote = FALSE,
+            append = FALSE, sep = "\t", row.names = FALSE)
+
+#### Chromatin loop boundaries
+loops <- read.table("~/Desktop/Decato-PMD-revision-analysis/OE_statistics/loop_OE", header = TRUE)
+summary(loops$OE) # There is a median OE ratio of 1.65 across all PMD containing samples.
+
+loops <- loops %>%
+  rowwise() %>%
+  mutate(BinomTestP = (binom.test(ObsOverlap, NumLoopBoundaries, ExpOverlap/NumLoopBoundaries))$p.value) %>%
+  mutate(adjP = p.adjust(BinomTestP)) %>% mutate(sig = ifelse(adjP < 0.05,"Yes","No"))
+table(loops$sig)
 
 write.table(tes, file = "~/Desktop/Decato-PMD-revision-analysis/tes_OE_table.tsv", quote = FALSE,
             append = FALSE, sep = "\t", row.names = FALSE)
