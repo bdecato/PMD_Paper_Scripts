@@ -122,6 +122,19 @@ table(tes$sig)
 write.table(tes, file = "~/Desktop/Decato-PMD-revision-analysis/tes_OE_table.tsv", quote = FALSE,
             append = FALSE, sep = "\t", row.names = FALSE)
 
+#### CTCF bound sites
+ctcf <- read.table("~/Desktop/Decato-PMD-revision-analysis/CTCF_enrichment/human_ctcf_boundary_OE",header=TRUE)
+summary(ctcf$OE)
+
+ctcf <- ctcf %>%
+  rowwise() %>%
+  mutate(BinomTestP = (binom.test(ObsOverlap, NumCTCFboundsites, ExpOverlap/NumCTCFboundsites))$p.value) %>%
+  mutate(adjP = p.adjust(BinomTestP)) %>% mutate(sig = ifelse(adjP < 0.05,"Yes","No"))
+table(ctcf$sig)
+
+write.table(ctcf, file = "~/Desktop/Decato-PMD-revision-analysis/ctcf_OE_table.tsv", quote = FALSE,
+            append = FALSE, sep = "\t", row.names = FALSE)
+
 #### Chromatin loop boundaries
 loops <- read.table("~/Desktop/Decato-PMD-revision-analysis/OE_statistics/loop_OE", header = TRUE)
 summary(loops$OE) # There is a median OE ratio of 1.65 across all PMD containing samples.
@@ -132,7 +145,7 @@ loops <- loops %>%
   mutate(adjP = p.adjust(BinomTestP)) %>% mutate(sig = ifelse(adjP < 0.05,"Yes","No"))
 table(loops$sig)
 
-write.table(tes, file = "~/Desktop/Decato-PMD-revision-analysis/tes_OE_table.tsv", quote = FALSE,
+write.table(loops, file = "~/Desktop/Decato-PMD-revision-analysis/loops_OE_table.tsv", quote = FALSE,
             append = FALSE, sep = "\t", row.names = FALSE)
 
 #####################################
